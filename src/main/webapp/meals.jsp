@@ -1,16 +1,35 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Алексей
-  Date: 07.04.2026
-  Time: 20:44
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
-    <title>Title</title>
+    <title>Список еды</title>
+    <style>
+        .excess {
+            color: red;
+        }
+
+        .normal {
+            color: green;
+        }
+    </style>
 </head>
 <body>
-
+<h2>Список еды</h2>
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Дата и время</th>
+        <th>Описание</th>
+        <th>Калории</th>
+    </tr>
+    <c:forEach items="${meals}" var="meal">
+        <tr class="${meal.excess ? 'excess' : 'normal'}">
+            <!-- Время без 'T' — заменяем T на пробел -->
+            <td>${meal.dateTime.toString().replace('T', ' ')}</td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
+        </tr>
+    </c:forEach>
+</table>
 </body>
 </html>
