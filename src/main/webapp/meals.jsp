@@ -24,7 +24,6 @@
     </tr>
     <c:forEach items="${meals}" var="meal">
         <tr class="${meal.excess ? 'excess' : 'normal'}">
-            <!-- Время без 'T' — заменяем T на пробел -->
             <td>${meal.dateTime.toString().replace('T', ' ')}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
