@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class MealTo {
 
-    private Integer id;
+    private int id;
 
     private final LocalDateTime dateTime;
 
@@ -16,13 +16,10 @@ public class MealTo {
     private final boolean excess;
 
     public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
-        this.excess = excess;
+        this(null, dateTime, description, calories, excess);
     }
 
-    public MealTo(Integer id, boolean excess, String description, LocalDateTime dateTime, int calories) {
+    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
         this.calories = calories;
         this.excess = excess;
         this.description = description;
@@ -55,7 +52,7 @@ public class MealTo {
     }
 
     public boolean isNew() {
-        return id == null;
+        return id == 0;
     }
 
     @Override

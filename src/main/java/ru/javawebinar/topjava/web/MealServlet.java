@@ -12,22 +12,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 public class MealServlet extends HttpServlet {
-    private static final MealRepository repository = new InMemoryMealRepository();
 
-//    private static final List<Meal> camelCase = Arrays.asList(
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-//            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-//    );
+    private MealRepository repository;
 
     private static final int CALORIES_PER_DAY = 2000;
+
+    @Override
+    public void init() throws ServletException {
+        repository = new InMemoryMealRepository();
+
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        repository.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,7 +51,6 @@ public class MealServlet extends HttpServlet {
             Meal meal = repository.get(id);
             request.setAttribute("meal", meal);
         }
-
         List<Meal> meals = repository.getAll();
         List<MealTo> mealsTo = MealsUtil.getAll(meals, CALORIES_PER_DAY);
 
@@ -66,7 +70,7 @@ public class MealServlet extends HttpServlet {
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        Meal meal = new Meal(id, description, dateTime, calories);
+        Meal meal = new Meal(id, dateTime, description, calories);
 
         repository.save(meal);
 

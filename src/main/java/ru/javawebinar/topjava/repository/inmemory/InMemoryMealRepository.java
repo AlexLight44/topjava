@@ -17,8 +17,10 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal) {
-        if (meal.isNew()){
+        if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+        } else if (!storage.containsKey(meal.getId())) {
+            return null;
         }
         storage.put(meal.getId(), meal);
         return meal;
@@ -26,7 +28,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id) {
-        return storage.remove(id) !=null;
+        return storage.remove(id) != null;
     }
 
     @Override
