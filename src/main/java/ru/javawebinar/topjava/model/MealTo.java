@@ -27,11 +27,11 @@ public class MealTo {
         this.id = id;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -49,10 +49,6 @@ public class MealTo {
 
     public boolean isExcess() {
         return excess;
-    }
-
-    public boolean isNew() {
-        return id == 0;
     }
 
     @Override

@@ -40,7 +40,6 @@
         <th>Дата и время</th>
         <th>Описание</th>
         <th>Калории</th>
-        <th>Excess</th>
         <th>Действия</th>
     </tr>
     <c:forEach items="${meals}" var="meal">
@@ -48,7 +47,6 @@
             <td>${meal.dateTime.toString().replace('T', ' ')}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td>${meal.excess}</td>
             <td>
                 <a href="meals?action=edit&id=${meal.id}">Edit</a> |
                 <a href="meals?action=delete&id=${meal.id}" onclick="return confirm('Удалить?')">Delete</a>
