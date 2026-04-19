@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class MealTo {
 
@@ -61,15 +60,4 @@ public class MealTo {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        MealTo mealTo = (MealTo) o;
-        return Objects.equals(id, mealTo.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
 }
