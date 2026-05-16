@@ -35,7 +35,11 @@ public class InMemoryMealRepository implements MealRepository {
             log.info("save {} for user {}", meal, userId);
             return meal;
         }
-        // handle case: update, but not present in storage
+
+        if (!userMeals.containsKey(meal.getId())) {
+            log.warn("Attempt to update foreign meal id={} for user {}", meal.getId(), userId);
+            return null;
+        }
         return userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
