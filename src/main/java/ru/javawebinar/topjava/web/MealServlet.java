@@ -6,18 +6,21 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
-
+import ru.javawebinar.topjava.util.TimeUtil;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MealServlet extends HttpServlet {
-    private static final int USER_ID = 1;
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
     private MealRepository repository;
@@ -38,7 +41,7 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        repository.save(meal, USER_ID);
+        repository.save(meal, SecurityUtil.authUserId());
         response.sendRedirect("meals");
     }
 
@@ -49,23 +52,36 @@ public class MealServlet extends HttpServlet {
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("Delete id={}", id);
-                repository.delete(id, USER_ID);
+                log.info("Delete id={}, userId={}", id, SecurityUtil.authUserId());
+                repository.delete(id, SecurityUtil.authUserId());
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        repository.get(getId(request), USER_ID);
+                        repository.get(getId(request), SecurityUtil.authUserId());
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "all":
             default:
-                log.info("getAll");
+                log.info("getAll, userId={}", SecurityUtil.authUserId());
+                Collection<Meal> meals = repository.getAll(SecurityUtil.authUserId());
+
+                LocalDate startDate = TimeUtil.parseLocalDate(request.getParameter("startDate"));
+                LocalDate endDate = TimeUtil.parseLocalDate(request.getParameter("endDate"));
+                LocalTime startTime = TimeUtil.parseLocalTime(request.getParameter("startTime"));
+                LocalTime endTime = TimeUtil.parseLocalTime(request.getParameter("endTime"));
+
+                if (startDate != null || endDate != null || startTime != null || endTime != null) {
+                    meals = meals.stream()
+                            .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
+                            .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                            .collect(Collectors.toList());
+                }
                 request.setAttribute("meals",
-                        MealsUtil.getTos(repository.getAll(USER_ID), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                        MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

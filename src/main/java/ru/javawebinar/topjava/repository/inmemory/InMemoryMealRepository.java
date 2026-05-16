@@ -28,10 +28,11 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         Map<Integer, Meal> userMeals = mealsMap.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
-        log.info("save {} for user {}", meal, userId);
+
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             userMeals.put(meal.getId(), meal);
+            log.info("save {} for user {}", meal, userId);
             return meal;
         }
         // handle case: update, but not present in storage
