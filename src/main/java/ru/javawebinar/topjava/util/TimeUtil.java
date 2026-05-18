@@ -13,10 +13,10 @@ public class TimeUtil {
     }
 
     public static boolean isBetween(LocalDate localDate, LocalDate startDate, LocalDate endDate) {
-        return (startDate == null || !localDate.isBefore(startDate)) && (endDate == null || !localDate.isAfter(endDate));
+        return (startDate == null || !localDate.isBefore(startDate)) && (endDate == null || !localDate.isBefore(endDate));
     }
 
     public static boolean isBetween(LocalTime localTime, LocalTime startTime, LocalTime endTime) {
-        return (startTime == null || !localTime.isBefore(startTime)) && (endTime == null || !LocalTime.now().isBefore(endTime));
+        return (startTime == null || !localTime.isBefore(startTime)) && (endTime == null || localTime.isBefore(endTime));
     }
 }

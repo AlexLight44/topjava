@@ -7,6 +7,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.TimeUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -67,21 +67,15 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll, userId={}", SecurityUtil.authUserId());
-                Collection<Meal> meals = repository.getAll(SecurityUtil.authUserId());
 
                 LocalDate startDate = TimeUtil.parseLocalDate(request.getParameter("startDate"));
                 LocalDate endDate = TimeUtil.parseLocalDate(request.getParameter("endDate"));
                 LocalTime startTime = TimeUtil.parseLocalTime(request.getParameter("startTime"));
                 LocalTime endTime = TimeUtil.parseLocalTime(request.getParameter("endTime"));
 
-                if (startDate != null || endDate != null || startTime != null || endTime != null) {
-                    meals = meals.stream()
-                            .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
-                            .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
-                            .collect(Collectors.toList());
-                }
-                request.setAttribute("meals",
-                        MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                List<Meal> meals = repository.getAll(SecurityUtil.authUserId(), startDate, endDate, startTime, endTime);
+
+                request.setAttribute("meals", MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

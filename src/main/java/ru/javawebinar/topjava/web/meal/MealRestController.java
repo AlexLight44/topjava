@@ -30,14 +30,8 @@ public class MealRestController {
         int userId = SecurityUtil.authUserId();
         log.info("getAll for userId={}, startDate={}, endDate={}, startTime={}, endTime={}",
                 userId, startDate, endDate, startTime, endTime);
-        List<Meal> meals = service.getAll(userId);
-        if (startDate != null || endDate != null || startTime != null || endTime != null) {
-            meals = meals.stream()
-                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
-                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
-                    .collect(Collectors.toList());
-        }
-        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        List<Meal> meals = service.getAll(userId, startDate, endDate, startTime, endTime);
+        return filterDateTime(meals, startDate, endDate, startTime, endTime);
     }
 
     public Meal get(int id) {
@@ -64,5 +58,15 @@ public class MealRestController {
         log.info("update {} for user {}", meal, userId);
         assureIdConsistent(meal, userId);
         service.update(meal, userId);
+    }
+
+    private List<MealTo> filterDateTime(List<Meal> meals, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        if (startDate != null || endDate != null || startTime != null || endTime != null) {
+            meals = meals.stream()
+                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
+                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                    .collect(Collectors.toList());
+        }
+        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 }
