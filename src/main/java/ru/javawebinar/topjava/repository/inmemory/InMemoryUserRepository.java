@@ -15,19 +15,20 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
     private final Map<Integer, User> userMap = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
-    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
+
 
     @Override
     public User save(User user) {
+        log.info("save {}", user);
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
             userMap.put(user.getId(), user);
+            return user;
         }
-        userMap.computeIfPresent(user.getId(), (id, oldUser) -> user);
-        log.info("save {}", user);
-        return user;
+        return userMap.computeIfPresent(user.getId(), (id, oldUser) -> user);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         return userMap.values().stream().sorted(Comparator.comparing(User::getName)
-                .thenComparing(User::getId)).collect(Collectors.toList());
+                .thenComparing(User::getEmail)).collect(Collectors.toList());
     }
 
     @Override

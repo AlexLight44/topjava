@@ -6,9 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.TimeUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
@@ -16,13 +22,22 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 @Controller
 public class MealRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private MealService service;
 
-    public Collection<Meal> getAll() {
+    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
-        log.info("getAll");
-        return service.getAll(userId);
+        log.info("getAll for userId={}, startDate={}, endDate={}, startTime={}, endTime={}",
+                userId, startDate, endDate, startTime, endTime);
+        List<Meal> meals = service.getAll(userId);
+        if (startDate != null || endDate != null || startTime != null || endTime != null) {
+            meals = meals.stream()
+                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
+                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                    .collect(Collectors.toList());
+        }
+        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) {

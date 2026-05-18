@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class TimeUtil {
-    public static LocalDate parseLocalDate(String startDate) {
-        return startDate == null || startDate.isEmpty() ? null : LocalDate.parse(startDate);
+    public static LocalDate parseLocalDate(String date) {
+        return date == null || date.isEmpty() ? null : LocalDate.parse(date);
     }
 
-    public static LocalTime parseLocalTime(String startTime) {
-        return startTime == null || startTime.isEmpty() ? null : LocalTime.parse(startTime);
+    public static LocalTime parseLocalTime(String time) {
+        return time == null || time.isEmpty() ? null : LocalTime.parse(time);
     }
 
     public static boolean isBetween(LocalDate localDate, LocalDate startDate, LocalDate endDate) {
@@ -17,6 +17,6 @@ public class TimeUtil {
     }
 
     public static boolean isBetween(LocalTime localTime, LocalTime startTime, LocalTime endTime) {
-        return (startTime == null || !localTime.isBefore(startTime)) && (endTime == null || !LocalTime.now().isAfter(endTime));
+        return (startTime == null || !localTime.isBefore(startTime)) && (endTime == null || !LocalTime.now().isBefore(endTime));
     }
 }
