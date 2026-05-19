@@ -26,12 +26,32 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAll() {
+        int userId = SecurityUtil.authUserId();
+        log.info("getAll for userId={}", userId);
+
+        List<Meal> meals = service.getAll(userId);
+        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+    }
+
+    public List<MealTo> getAllDateTime(LocalDate startDate, LocalDate endDate,
+                               LocalTime startTime, LocalTime endTime) {
+
         int userId = SecurityUtil.authUserId();
         log.info("getAll for userId={}, startDate={}, endDate={}, startTime={}, endTime={}",
                 userId, startDate, endDate, startTime, endTime);
-        List<Meal> meals = service.getAll(userId, startDate, endDate, startTime, endTime);
-        return filterDateTime(meals, startDate, endDate, startTime, endTime);
+
+        List<Meal> meals = service.getAll(userId);
+
+        List<MealTo> mealTos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+
+        if (startDate != null || endDate != null || startTime != null || endTime != null) {
+            mealTos = mealTos.stream()
+                    .filter(mealTo -> TimeUtil.isBetween(mealTo.getDate(), startDate, endDate))
+                    .filter(mealTo -> TimeUtil.isBetween(mealTo.getTime(), startTime, endTime))
+                    .collect(Collectors.toList());
+        }
+        return mealTos;
     }
 
     public Meal get(int id) {
@@ -56,17 +76,7 @@ public class MealRestController {
     public void update(Meal meal) {
         int userId = SecurityUtil.authUserId();
         log.info("update {} for user {}", meal, userId);
-        assureIdConsistent(meal, userId);
+        assureIdConsistent(meal, meal.getId());
         service.update(meal, userId);
-    }
-
-    private List<MealTo> filterDateTime(List<Meal> meals, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        if (startDate != null || endDate != null || startTime != null || endTime != null) {
-            meals = meals.stream()
-                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
-                    .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
-                    .collect(Collectors.toList());
-        }
-        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 }

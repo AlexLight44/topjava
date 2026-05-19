@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -74,17 +75,25 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate,
-                             LocalTime startTime, LocalTime endTime) {
+    public List<Meal> getAllDateTime(int userId, LocalDate startDate, LocalDate endDate,
+                                     LocalTime startTime, LocalTime endTime) {
         log.info("getAll for user {} with filter [{}, {}] [{}, {}]",
                 userId, startDate, endDate, startTime, endTime);
-        List<Meal> meals = getAll(userId);
-        if (startDate == null && endDate == null && startTime == null && endTime == null) {
-            return meals;
+        Map<Integer, Meal> userMeals = getMapUserMeals(userId);
+        if (userMeals == null) {
+            return Collections.emptyList();
         }
-        return meals.stream()
+
+        Stream<Meal> stream = userMeals.values().stream();
+        if (startDate == null && endDate == null && startTime == null && endTime == null) {
+            return stream
+                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                    .collect(Collectors.toList());
+        }
+        return stream
                 .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
                 .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
