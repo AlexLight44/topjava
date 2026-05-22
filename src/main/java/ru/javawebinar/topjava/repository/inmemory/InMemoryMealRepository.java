@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,12 +67,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getAll(int userId) {
         log.info("getAll for user {}", userId);
-        Map<Integer, Meal> userMeals = getMapUserMeals(userId);
-        if (userMeals == null) {
-            return Collections.emptyList();
-        }
-        return userMeals.values().stream()
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
+        return filterByDateTime(userId, null);
     }
 
     @Override
@@ -79,26 +75,31 @@ public class InMemoryMealRepository implements MealRepository {
                                      LocalTime startTime, LocalTime endTime) {
         log.info("getAll for user {} with filter [{}, {}] [{}, {}]",
                 userId, startDate, endDate, startTime, endTime);
-        Map<Integer, Meal> userMeals = getMapUserMeals(userId);
-        if (userMeals == null) {
-            return Collections.emptyList();
-        }
+        Predicate<Meal> dateFilter = m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate);
+        Predicate<Meal> timeFilter = m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime);
+        Predicate<Meal> dateTimeFilter = dateFilter.and(timeFilter);
 
-        Stream<Meal> stream = userMeals.values().stream();
-        if (startDate == null && endDate == null && startTime == null && endTime == null) {
-            return stream
-                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                    .collect(Collectors.toList());
+        if (startDate == null && endDate == null && startTime == null && endTime == null){
+            return filterByDateTime(userId, null);
         }
-        return stream
-                .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate))
-                .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return filterByDateTime(userId, dateTimeFilter);
     }
 
     private Map<Integer, Meal> getMapUserMeals(int userId) {
         return mealsMap.get(userId);
+    }
+
+    private List<Meal> filterByDateTime(int userId, Predicate<Meal> filter) {
+        Map<Integer, Meal> userMeals = getMapUserMeals(userId);
+        if (userMeals == null) {
+            return Collections.emptyList();
+        }
+        Stream<Meal> stream = userMeals.values().stream();
+        if (filter != null) {
+            stream = stream.filter(filter);
+        }
+        return stream.sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
+
     }
 }
 

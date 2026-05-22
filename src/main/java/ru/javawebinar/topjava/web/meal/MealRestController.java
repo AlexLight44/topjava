@@ -41,7 +41,7 @@ public class MealRestController {
         log.info("getAll for userId={}, startDate={}, endDate={}, startTime={}, endTime={}",
                 userId, startDate, endDate, startTime, endTime);
 
-        List<Meal> meals = service.getAll(userId);
+        List<Meal> meals = service.getAllDateTime(userId, startDate, endDate, null, null);
 
         List<MealTo> mealTos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
 
