@@ -8,13 +8,11 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.TimeUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
@@ -35,23 +33,19 @@ public class MealRestController {
     }
 
     public List<MealTo> getAllDateTime(LocalDate startDate, LocalDate endDate,
-                               LocalTime startTime, LocalTime endTime) {
+                                       LocalTime startTime, LocalTime endTime) {
 
         int userId = SecurityUtil.authUserId();
         log.info("getAll for userId={}, startDate={}, endDate={}, startTime={}, endTime={}",
                 userId, startDate, endDate, startTime, endTime);
 
-        List<Meal> meals = service.getAllDateTime(userId, startDate, endDate, null, null);
+        List<Meal> meals = service.getAllDate(userId, startDate, endDate);
+     //   List<MealTo> mealTos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
 
-        List<MealTo> mealTos = MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
-
-        if (startDate != null || endDate != null || startTime != null || endTime != null) {
-            mealTos = mealTos.stream()
-                    .filter(mealTo -> TimeUtil.isBetween(mealTo.getDate(), startDate, endDate))
-                    .filter(mealTo -> TimeUtil.isBetween(mealTo.getTime(), startTime, endTime))
-                    .collect(Collectors.toList());
+        if (startTime == null && endTime == null) {
+           return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
         }
-        return mealTos;
+        return MealsUtil.getFilteredTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
     }
 
     public Meal get(int id) {

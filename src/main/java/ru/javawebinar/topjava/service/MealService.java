@@ -39,6 +39,10 @@ public class MealService {
         return repository.getAll(userId);
     }
 
+    public List<Meal> getAllDate(int userId, LocalDate startDate, LocalDate endDate){
+        return repository.getAllDate(userId, startDate, endDate);
+    }
+
     public List<Meal> getAllDateTime(int userId, LocalDate startDate, LocalDate endDate,
                              LocalTime startTime, LocalTime endTime){
         return repository.getAllDateTime(userId, startDate, endDate, startTime, endTime);

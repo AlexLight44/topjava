@@ -71,15 +71,25 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
+    public List<Meal> getAllDate(int userId, LocalDate startDate, LocalDate endDate) {
+        log.info("getAll for user {} with filter [{}, {}]", userId, startDate, endDate);
+        Predicate<Meal> dateFilter = m -> TimeUtil.isBetween(m.getDate(), startDate, endDate);
+        if (startDate == null && endDate == null) {
+            return filterByDateTime(userId, null);
+        }
+        return filterByDateTime(userId, dateFilter);
+    }
+
+    @Override
     public List<Meal> getAllDateTime(int userId, LocalDate startDate, LocalDate endDate,
                                      LocalTime startTime, LocalTime endTime) {
         log.info("getAll for user {} with filter [{}, {}] [{}, {}]",
                 userId, startDate, endDate, startTime, endTime);
-        Predicate<Meal> dateFilter = m -> TimeUtil.isBetween(m.getDateTime().toLocalDate(), startDate, endDate);
-        Predicate<Meal> timeFilter = m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime);
+        Predicate<Meal> dateFilter = m -> TimeUtil.isBetween(m.getDate(), startDate, endDate);
+        Predicate<Meal> timeFilter = m -> TimeUtil.isBetween(m.getTime(), startTime, endTime);
         Predicate<Meal> dateTimeFilter = dateFilter.and(timeFilter);
 
-        if (startDate == null && endDate == null && startTime == null && endTime == null){
+        if (startDate == null && endDate == null && startTime == null && endTime == null) {
             return filterByDateTime(userId, null);
         }
         return filterByDateTime(userId, dateTimeFilter);
