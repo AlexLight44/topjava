@@ -15,8 +15,12 @@ public class MealTestData {
     public static final int NOT_FOUND = 10;
 
 
-    public static final Meal meal1 = new Meal(MEAL_ID, LocalDateTime.of(2025, 5, 30, 10, 0), "Завтрак", 500);
-    public static final Meal meal2 = new Meal(MEAL_ID + 1, LocalDateTime.of(2025, 5, 30, 13, 0), "Обед", 1000);
+    public static final Meal meal1 = new Meal(MEAL_ID, LocalDateTime.of
+            (2025, 5, 30, 10, 0), "Завтрак", 500);
+    public static final Meal meal2 = new Meal(MEAL_ID + 1, LocalDateTime.of
+            (2025, 5, 30, 13, 0), "Обед", 1000);
+    public static final Meal meal3 = new Meal(MEAL_ID + 2, LocalDateTime.of
+            (2025, 5, 30, 9, 30), "Кофе", 300);
 
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.now(), "newMeal", 600);

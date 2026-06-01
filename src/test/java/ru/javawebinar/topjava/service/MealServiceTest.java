@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -57,6 +58,12 @@ public class MealServiceTest {
     }
 
     @Test
+    public void deleteNotOwn() {
+        assertThrows(NotFoundException.class, () ->
+                service.delete(MEAL_ID, ADMIN_ID));
+    }
+
+    @Test
     public void get() {
         Meal meal = service.get(MEAL_ID, USER_ID);
         assertMatch(meal, meal1);
@@ -68,10 +75,24 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getNotOwn() {
+        assertThrows(NotFoundException.class, () ->
+                service.get(MEAL_ID, ADMIN_ID));
+    }
+
+    @Test
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
         assertMatch(service.get(MEAL_ID, USER_ID), getUpdated());
+    }
+
+    @Test
+    public void updateNotOwn() {
+        Meal updated = getUpdated();
+        updated.setId(MEAL_ID);
+        assertThrows(NotFoundException.class, () ->
+                service.update(updated, ADMIN_ID));
     }
 
     @Test
@@ -80,6 +101,9 @@ public class MealServiceTest {
         MealTestData.assertMatch(all, meal2, meal1);
     }
 
-
-
+    @Test
+    public void duplicateDateTimeCreate() {
+        Meal duplicate = new Meal(null, meal1.getDateTime(), "Дубликат завтрака", 700);
+        assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
+    }
 }
