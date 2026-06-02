@@ -9,8 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
-    public static final int USER_ID = START_SEQ;
-    public static final int ADMIN_ID = START_SEQ + 1;
     public static final int MEAL_ID = START_SEQ + 3;
     public static final int NOT_FOUND = 10;
 
@@ -20,7 +18,19 @@ public class MealTestData {
     public static final Meal meal2 = new Meal(MEAL_ID + 1, LocalDateTime.of
             (2025, 5, 30, 13, 0), "Обед", 1000);
     public static final Meal meal3 = new Meal(MEAL_ID + 2, LocalDateTime.of
-            (2025, 5, 30, 9, 30), "Кофе", 300);
+            (2025, 5, 30, 9, 30), "Кофе", 700);
+    public static final Meal meal4 = new Meal(MEAL_ID + 3, LocalDateTime.of
+            (2025, 5, 30, 14, 30), "Перекус", 300);
+    public static final Meal meal5 = new Meal(MEAL_ID + 4, LocalDateTime.of
+            (2026, 5, 30, 10, 30), "Перекус", 300);
+    public static final Meal meal6 = new Meal(MEAL_ID + 5, LocalDateTime.of
+            (2026, 5, 30, 14, 30), "Перекус", 300);
+    public static final Meal meal7 = new Meal(MEAL_ID + 6, LocalDateTime.of
+            (2025, 5, 30, 17, 30), "Ужин", 300);
+    public static final Meal meal8 = new Meal(MEAL_ID + 7, LocalDateTime.of
+            (2025, 5, 30, 14, 35), "Пицца", 2100);
+    public static final Meal meal9 = new Meal(MEAL_ID + 8, LocalDateTime.of
+            (2026, 6, 30, 12, 30), "Творог", 300);
 
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.now(), "newMeal", 600);
@@ -36,7 +46,7 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("id", "dateTime").isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -45,7 +55,7 @@ public class MealTestData {
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
         assertThat(actual)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "dateTime")
+                .usingRecursiveFieldByFieldElementComparator()
                 .isEqualTo(expected);
     }
 }

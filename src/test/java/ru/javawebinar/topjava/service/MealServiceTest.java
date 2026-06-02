@@ -13,10 +13,17 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.BDDAssertions.within;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -24,7 +31,6 @@ import static ru.javawebinar.topjava.MealTestData.*;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-
 public class MealServiceTest {
 
     static {
@@ -38,12 +44,13 @@ public class MealServiceTest {
 
     @Test
     public void create() {
-        Meal created = service.create(getNew(), USER_ID);
-        Integer newId = created.getId();
         Meal newMeal = getNew();
-        newMeal.setId(newId);
-        assertMatch(created, newMeal);
-        assertMatch(service.get(newId, USER_ID), newMeal);
+        Meal created = service.create(newMeal, USER_ID);
+        assertThat(created.getId()).isNotNull();
+        assertThat(created.getDescription()).isEqualTo(newMeal.getDescription());
+        assertThat(created.getCalories()).isEqualTo(newMeal.getCalories());
+        assertThat(service.get(created.getId(), USER_ID).getDateTime())
+                .isCloseTo(created.getDateTime(), within(1, ChronoUnit.MICROS));
     }
 
     @Test
@@ -98,12 +105,39 @@ public class MealServiceTest {
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(USER_ID);
-        MealTestData.assertMatch(all, meal2, meal1);
+        MealTestData.assertMatch(all, meal6, meal5, meal7, meal4, meal2, meal1, meal3);
     }
 
     @Test
     public void duplicateDateTimeCreate() {
         Meal duplicate = new Meal(null, meal1.getDateTime(), "Дубликат завтрака", 700);
         assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
+    }
+
+    @Test
+    public void getBetweenInclusive() {
+        List<Meal> meals = service.getBetweenInclusive(
+                LocalDate.of(2025, 5, 30),
+                LocalDate.of(2025, 5, 30),
+                USER_ID
+        );
+
+        assertMatch(meals, meal7, meal4, meal2, meal1, meal3);
+    }
+
+    @Test
+    public void getBetweenInclusiveWithNullDates() {
+        List<Meal> meals = service.getBetweenInclusive(null, null, USER_ID);
+        assertMatch(meals, meal6, meal5, meal7, meal4, meal2, meal1, meal3);
+    }
+
+    @Test
+    public void getBetweenInclusiveEmptyResult() {
+        List<Meal> meals = service.getBetweenInclusive(
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 1, 2),
+                USER_ID
+        );
+        assertMatch(meals, Collections.emptyList());
     }
 }

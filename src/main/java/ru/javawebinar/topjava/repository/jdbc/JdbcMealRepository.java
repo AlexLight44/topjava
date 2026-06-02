@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-
 public class JdbcMealRepository implements MealRepository {
     private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -87,8 +86,8 @@ public class JdbcMealRepository implements MealRepository {
         return namedParameterJdbcTemplate.query(
                 "SELECT id, date_time, description, calories FROM meals " +
                         "WHERE user_id = :userId " +
-                        "  AND (:start IS NULL OR date_time >= :start) " +
-                        "  AND (:end IS NULL OR date_time < :end) " +
+                        "  AND date_time >= :start " +
+                        "  AND date_time < :end " +
                         "ORDER BY date_time DESC",
                 map, ROW_MAPPER);
     }
