@@ -33,7 +33,7 @@ public class MealTestData {
             (2026, 6, 30, 12, 30), "Творог", 300);
 
     public static Meal getNew() {
-        return new Meal(null, LocalDateTime.of(2026,6,3,12,10), "newMeal", 600);
+        return new Meal(null, LocalDateTime.of(2026, 6, 3, 12, 10), "newMeal", 600);
     }
 
     public static Meal getUpdated() {
