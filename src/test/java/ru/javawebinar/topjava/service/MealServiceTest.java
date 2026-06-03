@@ -14,12 +14,9 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.BDDAssertions.within;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -44,13 +41,12 @@ public class MealServiceTest {
 
     @Test
     public void create() {
+        Meal created = service.create(getNew(), USER_ID);
+        Integer newId = created.getId();
         Meal newMeal = getNew();
-        Meal created = service.create(newMeal, USER_ID);
-        assertThat(created.getId()).isNotNull();
-        assertThat(created.getDescription()).isEqualTo(newMeal.getDescription());
-        assertThat(created.getCalories()).isEqualTo(newMeal.getCalories());
-        assertThat(service.get(created.getId(), USER_ID).getDateTime())
-                .isCloseTo(created.getDateTime(), within(1, ChronoUnit.MICROS));
+        newMeal.setId(newId);
+        assertMatch(created, newMeal);
+        assertMatch(service.get(newId, USER_ID), newMeal);
     }
 
     @Test
