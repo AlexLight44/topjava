@@ -23,7 +23,7 @@ import java.time.LocalTime;
                 query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= :start AND m.dateTime < :end ORDER BY m.dateTime DESC")
 })
 @Entity
-@Table(name = "mael")
+@Table(name = "meal")
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
