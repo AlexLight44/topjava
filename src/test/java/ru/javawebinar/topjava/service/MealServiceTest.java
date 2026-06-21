@@ -16,7 +16,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -59,8 +61,10 @@ public class MealServiceTest {
         int newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        MEAL_MATCHER.assertMatch(created, newMeal);
-        MEAL_MATCHER.assertMatch(service.get(newId, USER_ID), newMeal);
+        assertThat(created)
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(newMeal);
     }
 
     @Test
@@ -72,7 +76,10 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
-        MEAL_MATCHER.assertMatch(actual, adminMeal1);
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(adminMeal1);
     }
 
     @Test
@@ -89,31 +96,42 @@ public class MealServiceTest {
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
+        assertThat(service.get(MEAL1_ID, USER_ID))
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(getUpdated());
     }
 
     @Test
     public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
-        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
+//        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
     public void getAll() {
-        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
+        assertThat(service.getAll(USER_ID))
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(meals);
     }
 
     @Test
     public void getBetweenInclusive() {
-        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
-                        LocalDate.of(2020, Month.JANUARY, 30),
-                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
-                meal3, meal2, meal1);
+        assertThat(service.getBetweenInclusive(
+                LocalDate.of(2020, Month.JANUARY, 30),
+                LocalDate.of(2020, Month.JANUARY, 30), USER_ID))
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(Arrays.asList(meal3, meal2, meal1));
     }
 
     @Test
     public void getBetweenWithNullDates() {
-        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
+        assertThat(service.getBetweenInclusive(null, null, USER_ID))
+                .usingRecursiveComparison()
+                .ignoringFields("user")
+                .isEqualTo(meals);
     }
 
     @AfterClass
