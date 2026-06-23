@@ -16,9 +16,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -30,7 +28,6 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-//@Ignore
 public class MealServiceTest {
 
     @Rule
@@ -38,6 +35,11 @@ public class MealServiceTest {
 
     @Autowired
     private MealService service;
+
+    @AfterClass
+    public static void printTimingSummary() {
+        TimingRule.printSummary();
+    }
 
     @Test
     public void delete() {
@@ -61,10 +63,7 @@ public class MealServiceTest {
         int newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        assertThat(created)
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(newMeal);
+        MEAL_MATCHER.assertMatch(created, newMeal);
     }
 
     @Test
@@ -76,10 +75,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
-        assertThat(actual)
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(adminMeal1);
+        MEAL_MATCHER.assertMatch(actual, adminMeal1);
     }
 
     @Test
@@ -96,46 +92,31 @@ public class MealServiceTest {
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        assertThat(service.get(MEAL1_ID, USER_ID))
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(getUpdated());
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
     @Test
     public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
-//        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
     public void getAll() {
-        assertThat(service.getAll(USER_ID))
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(meals);
+        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
     public void getBetweenInclusive() {
-        assertThat(service.getBetweenInclusive(
-                LocalDate.of(2020, Month.JANUARY, 30),
-                LocalDate.of(2020, Month.JANUARY, 30), USER_ID))
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(Arrays.asList(meal3, meal2, meal1));
+        MEAL_MATCHER.assertMatch(
+                service.getBetweenInclusive(
+                        LocalDate.of(2020, Month.JANUARY, 30),
+                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
+                meal3, meal2, meal1);
     }
 
     @Test
     public void getBetweenWithNullDates() {
-        assertThat(service.getBetweenInclusive(null, null, USER_ID))
-                .usingRecursiveComparison()
-                .ignoringFields("user")
-                .isEqualTo(meals);
-    }
-
-    @AfterClass
-    public static void printTimingSummary() {
-        TimingRule.printSummary();
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }
 }

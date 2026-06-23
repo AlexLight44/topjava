@@ -3,11 +3,9 @@ package ru.javawebinar.topjava.model;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,6 +37,7 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
     @Column(name = "calories", nullable = false)
@@ -47,6 +46,7 @@ public class Meal extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {

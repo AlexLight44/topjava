@@ -1,37 +1,50 @@
 package ru.javawebinar.topjava;
 
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class TimingRule extends TestWatcher {
+public class TimingRule extends Stopwatch {
 
     private static final Logger log = LoggerFactory.getLogger(TimingRule.class);
 
     private static final Map<String, Long> timings = new LinkedHashMap<>();
-    private long startTime;
 
     @Override
-    protected void starting(Description description) {
-        startTime = System.currentTimeMillis();
+    protected void succeeded(long nanos, Description description) {
+        recordTime(description, nanos);
     }
 
     @Override
-    protected void finished(Description description) {
-        long duratin = System.currentTimeMillis() - startTime;
-        String testName = description.getMethodName();
+    protected void failed(long nanos, Throwable e, Description description) {
+        recordTime(description, nanos);
+    }
 
-        timings.put(testName, duratin);
-        log.info("Test '{}' finished in {} ms", testName, duratin);
+    @Override
+    protected void skipped(long nanos, org.junit.AssumptionViolatedException e, Description description) {
+        recordTime(description, nanos);
+    }
+
+    private void recordTime(Description description, long nanos) {
+        String testName = description.getMethodName();
+        long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
+        timings.put(testName, millis);
+        log.info("Test '{}' finished in {} ms", testName, millis);
     }
 
     public static void printSummary() {
-        log.info("=== TEST EXECUTION TIME SUMMARY");
-        timings.forEach((name, time) -> log.info("{} - {} ms", name, time));
-        log.info("===============================");
+        StringBuilder stringBuilder = new StringBuilder("\n === TEST EXECUTION TIME SUMMARY === \n");
+        timings.forEach((name, time) -> stringBuilder
+                .append(name)
+                .append(" - ")
+                .append(time)
+                .append(" ms\n"));
+        stringBuilder.append("===============================");
+        log.info(stringBuilder.toString());
     }
 }
