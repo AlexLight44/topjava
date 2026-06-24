@@ -16,21 +16,7 @@ public class TimingRule extends Stopwatch {
     private static final Map<String, Long> timings = new LinkedHashMap<>();
 
     @Override
-    protected void succeeded(long nanos, Description description) {
-        recordTime(description, nanos);
-    }
-
-    @Override
-    protected void failed(long nanos, Throwable e, Description description) {
-        recordTime(description, nanos);
-    }
-
-    @Override
-    protected void skipped(long nanos, org.junit.AssumptionViolatedException e, Description description) {
-        recordTime(description, nanos);
-    }
-
-    private void recordTime(Description description, long nanos) {
+    protected void finished(long nanos, Description description) {
         String testName = description.getMethodName();
         long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
         timings.put(testName, millis);
