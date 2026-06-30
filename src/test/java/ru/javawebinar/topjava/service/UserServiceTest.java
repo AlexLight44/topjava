@@ -5,17 +5,20 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.UserTestData;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-public class UserServiceTest extends AbstractServiceTest{
+public class UserServiceTest extends AbstractServiceTest {
 
     @Autowired
     private UserService service;
@@ -83,5 +86,15 @@ public class UserServiceTest extends AbstractServiceTest{
     public void getAll() {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, admin, guest, user);
+    }
+
+    @Test
+    public void getWithMeals() {
+        User user = service.getWithMeals(USER_ID);
+        USER_MATCHER.assertMatch(user, UserTestData.user);
+        assertThat(user.getMeals())
+                .hasSizeGreaterThanOrEqualTo(2)
+                .extracting(Meal::getId)
+                .contains(MealTestData.MEAL1_ID, MealTestData.MEAL1_ID + 1);
     }
 }
