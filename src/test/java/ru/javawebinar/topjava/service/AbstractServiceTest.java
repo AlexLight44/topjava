@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.Stopwatch;
@@ -13,7 +14,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
-import ru.javawebinar.topjava.Profiles;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +26,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(
-        profiles = Profiles.REPOSITORY_IMPLEMENTATION,
+//        profiles = Profiles.REPOSITORY_IMPLEMENTATION,
         resolver = ActiveDbProfileResolver.class)
 @Ignore
 public class AbstractServiceTest {
@@ -44,6 +44,11 @@ public class AbstractServiceTest {
         }
     };
 
+    @BeforeClass
+    public static void beforeClass() {
+        results.setLength(0);
+    }
+
     @AfterClass
     public static void printResult() {
         log.info("\n---------------------------------" +
@@ -51,5 +56,6 @@ public class AbstractServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+
     }
 }

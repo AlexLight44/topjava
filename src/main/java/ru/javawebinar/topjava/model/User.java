@@ -56,7 +56,7 @@ public class User extends AbstractNamedEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @OrderBy("dateTime DESC")
-    private List<Meal> meals = new ArrayList<>();
+    public List<Meal> meals = new ArrayList<>();
 
     public User() {
     }
