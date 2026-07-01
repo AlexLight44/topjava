@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 
 @Repository
 @Profile(Profiles.HSQL_DB)
-public class JdbcHsqlMealRepository extends AbstractJdbcMealRepository<Timestamp> {
+public class HsqlJdbcMealRepository extends AbstractJdbcMealRepository<Timestamp> {
 
-    protected JdbcHsqlMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    protected HsqlJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
@@ -21,10 +21,4 @@ public class JdbcHsqlMealRepository extends AbstractJdbcMealRepository<Timestamp
     protected Timestamp toDbDateTime(LocalDateTime ldt) {
         return ldt == null ? null : Timestamp.valueOf(ldt);
     }
-
-    @Override
-    protected LocalDateTime fromDbDateTime(Timestamp dbValue) {
-        return dbValue == null ? null : ((Timestamp) dbValue).toLocalDateTime();
-    }
-
 }

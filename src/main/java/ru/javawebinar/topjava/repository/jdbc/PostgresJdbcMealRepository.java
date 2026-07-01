@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 @Repository
 @Profile(Profiles.POSTGRES_DB)
-public class JdbcPostgresMealRepository extends AbstractJdbcMealRepository<LocalDateTime> {
+public class PostgresJdbcMealRepository extends AbstractJdbcMealRepository<LocalDateTime> {
 
-    public JdbcPostgresMealRepository(JdbcTemplate jdbcTemplate,
+    public PostgresJdbcMealRepository(JdbcTemplate jdbcTemplate,
                                       NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
@@ -21,11 +21,4 @@ public class JdbcPostgresMealRepository extends AbstractJdbcMealRepository<Local
     protected LocalDateTime toDbDateTime(LocalDateTime ldt) {
         return ldt;
     }
-
-    @Override
-    protected LocalDateTime fromDbDateTime(LocalDateTime dbValue) {
-        return dbValue;
-    }
-
-
 }
