@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractJspController;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -32,29 +33,16 @@ public class JspMealController extends AbstractJspController {
         log.info("meals");
         List<MealTo> mealsTo;
         if ("filter".equals(request.getParameter("action"))) {
-            LocalDate startDate = parseOrNull(request.getParameter("startDate"));
-            LocalDate endDate   = parseOrNull(request.getParameter("endDate"));
-
+            LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
+            LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
             List<Meal> meals = service.getBetweenInclusive(startDate, endDate, SecurityUtil.authUserId());
             mealsTo = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
         } else {
             List<Meal> meals = service.getAll(SecurityUtil.authUserId());
             mealsTo = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
         }
-
         model.addAttribute("meals", mealsTo);
         return "meals";
-    }
-
-    private LocalDate parseOrNull(String dateStr) {
-        if (dateStr == null || dateStr.isBlank()) {
-            return null;
-        }
-        try {
-            return LocalDate.parse(dateStr);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     @GetMapping("/create")
