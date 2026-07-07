@@ -18,7 +18,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
-
+//@Import(CacheConfigTest.class)
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
