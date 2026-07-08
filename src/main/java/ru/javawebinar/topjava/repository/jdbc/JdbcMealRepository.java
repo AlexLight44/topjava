@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.sql.Timestamp;
@@ -47,7 +46,7 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", DateTimeUtil.toTimestamp(meal.getDateTime()))
+                .addValue("date_time", meal.getDateTime())
                 .addValue("user_id", userId);
 
         if (meal.isNew()) {
