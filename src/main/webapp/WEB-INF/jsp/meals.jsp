@@ -13,7 +13,6 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <h3><a href="index.jsp">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
     <form method="get" action="meals">
@@ -65,5 +64,6 @@
         </c:forEach>
     </table>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

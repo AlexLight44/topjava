@@ -18,6 +18,7 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -35,8 +36,10 @@ public class JspMealController extends AbstractJspController {
         if ("filter".equals(request.getParameter("action"))) {
             LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
             LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
+            LocalTime startTime = DateTimeUtil.parseLocalTime(request.getParameter("startTime"));
+            LocalTime endTime = DateTimeUtil.parseLocalTime(request.getParameter("endTime"));
             List<Meal> meals = service.getBetweenInclusive(startDate, endDate, SecurityUtil.authUserId());
-            mealsTo = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
+            mealsTo = MealsUtil.getFilteredTos(meals, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
         } else {
             List<Meal> meals = service.getAll(SecurityUtil.authUserId());
             mealsTo = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());

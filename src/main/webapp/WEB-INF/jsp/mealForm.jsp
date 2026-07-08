@@ -10,7 +10,6 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h3><a href="index.jsp">Home</a></h3>
     <hr>
     <h2>${meal.id == null ? 'Create meal' : 'Edit meal' }</h2>
     <form method="post" action="${pageContext.request.contextPath}/meals">
@@ -31,5 +30,6 @@
         <button onclick="window.history.back()" type="button">Cancel</button>
     </form>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
