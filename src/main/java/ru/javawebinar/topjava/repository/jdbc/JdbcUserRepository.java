@@ -60,10 +60,19 @@ public class JdbcUserRepository implements UserRepository {
         return user;
     }
 
+    private void setRoles(User user) {
+        Set<Role> roles = user.getRoles();
+        if (roles.isEmpty()) return;
+        List<Object[]> batch = roles.stream()
+                .map(role -> new Object[]{user.getId(), role.name()}).toList();
+        jdbcTemplate.batchUpdate(
+                "INSERT INTO user_role (user_id, role) VALUES (?, ?)", batch
+        );
+    }
+
     @Override
     @Transactional
     public boolean delete(int id) {
-        jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", id);
         return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
     }
 
@@ -88,6 +97,14 @@ public class JdbcUserRepository implements UserRepository {
         return user;
     }
 
+    private Set<Role> getRoles(int userId) {
+        List<Role> roles = jdbcTemplate.query(
+                "SELECT role FROM user_role WHERE user_id=?",
+                (rs, rowNum) -> Role.valueOf(rs.getString("role")),
+                userId);
+        return roles.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(roles);
+    }
+
     @Override
     public List<User> getAll() {
         List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
@@ -99,23 +116,5 @@ public class JdbcUserRepository implements UserRepository {
         });
         users.forEach(user -> user.setRoles(userRolesMap.getOrDefault(user.getId(), Collections.emptySet())));
         return users;
-    }
-
-    private Set<Role> getRoles(int userId) {
-        List<Role> roles = jdbcTemplate.query(
-                "SELECT role FROM user_role WHERE user_id=?",
-                (rs, rowNum) -> Role.valueOf(rs.getString("role")),
-                userId);
-        return roles.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(roles);
-    }
-
-    private void setRoles(User user) {
-        Set<Role> roles = user.getRoles();
-        if (roles.isEmpty()) return;
-        List<Object[]> batch = roles.stream()
-                .map(role -> new Object[]{user.getId(), role.name()}).toList();
-        jdbcTemplate.batchUpdate(
-                "INSERT INTO user_role (user_id, role) VALUES (?, ?)", batch
-        );
     }
 }
