@@ -13,9 +13,8 @@
     <hr/>
     <h2><spring:message code="meal.list"/></h2>
 
-    <!-- Форма фильтра -->
-    <form method="get" action="meals">
-        <input type="hidden" name="action" value="filter">
+    <h3><spring:message code="meal.title"/></h3>
+        <form method="get" action="${pageContext.request.contextPath}/meals/filter">
         <dl>
             <dt><spring:message code="meal.startDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
