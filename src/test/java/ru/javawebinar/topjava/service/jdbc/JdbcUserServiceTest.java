@@ -15,10 +15,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 @ActiveProfiles(JDBC)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JdbcUserServiceTest extends AbstractUserServiceTest {
-    @Override
-    @Test
-    public void createWithException() throws Exception {
-    }
+
     @Test
     public void test1_update() {
         User updated = getUpdated();
