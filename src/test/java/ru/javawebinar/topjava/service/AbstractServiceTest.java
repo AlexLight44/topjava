@@ -14,6 +14,7 @@ import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -34,6 +35,17 @@ public abstract class AbstractServiceTest {
     protected <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
         assertThatExceptionOfType(Throwable.class)
                 .isThrownBy(runnable::run)
-                .withRootCauseInstanceOf(rootExceptionClass);
+                .satisfies(thrown -> {
+                    Throwable rootCause = getRootCause(thrown);
+                    assertThat(rootCause).isInstanceOf(rootExceptionClass);
+                });
+    }
+
+    private Throwable getRootCause(Throwable ex) {
+        Throwable cause = ex;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 }

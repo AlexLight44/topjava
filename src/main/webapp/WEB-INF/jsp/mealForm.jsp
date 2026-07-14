@@ -8,16 +8,7 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <hr>
-    <h2>
-        <c:choose>
-            <c:when test="${meal.id == null}">
-                <spring:message code="meal.add"/>
-            </c:when>
-            <c:otherwise>
-                <spring:message code="meal.edit"/>
-            </c:otherwise>
-        </c:choose>
-    </h2>
+    <h2><spring:message code="${meal.id == null ? 'meal.add' : 'meal.edit'}"/></h2>
 
     <form method="post" action="${pageContext.request.contextPath}/meals">
         <input type="hidden" name="id" value="${meal.id}">
