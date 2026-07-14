@@ -10,7 +10,7 @@
     <hr>
     <h2><spring:message code="${meal.id == null ? 'meal.add' : 'meal.edit'}"/></h2>
 
-    <form method="post" action="${pageContext.request.contextPath}/meals">
+    <form method="post" action="meals">
         <input type="hidden" name="id" value="${meal.id}">
 
         <dl>

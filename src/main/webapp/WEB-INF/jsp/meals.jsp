@@ -14,7 +14,7 @@
     <h2><spring:message code="meal.list"/></h2>
 
     <h3><spring:message code="meal.title"/></h3>
-        <form method="get" action="${pageContext.request.contextPath}/meals/filter">
+        <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="meal.startDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -35,7 +35,7 @@
     </form>
 
     <hr/>
-    <a href="${pageContext.request.contextPath}/meals/create"><spring:message code="meal.add"/></a>
+    <a href="meals/create"><spring:message code="meal.add"/></a>
     <br><br>
 
     <table border="1" cellpadding="8" cellspacing="0">
@@ -55,8 +55,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="${pageContext.request.contextPath}/meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
-                <td><a href="${pageContext.request.contextPath}/meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>
+                <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
+                <td><a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>
             </tr>
         </c:forEach>
     </table>
