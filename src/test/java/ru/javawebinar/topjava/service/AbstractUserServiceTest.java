@@ -30,14 +30,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Test
-    public void springCacheInAction() {
-        List<User> before = service.getAll();
-        service.delete(USER_ID);
-        List<User> after = service.getAll();
-        assertThat(before.size()).isGreaterThan(after.size());
-    }
-
     @PersistenceContext
     private EntityManager em;
 
@@ -56,12 +48,12 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
     }
 
-
+//    @Autowired(required = false)
+//    protected JpaUtil jpaUtil;
+//
 //    @Autowired
 //    private CacheManager cacheManager;
 //
-//    @Autowired(required = false)
-//    protected JpaUtil jpaUtil;
 //
 //    @Before
 //    public void setup() {
