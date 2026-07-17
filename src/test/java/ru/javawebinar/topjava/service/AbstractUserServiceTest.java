@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.service;
 
+import org.hibernate.Session;
+import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -7,15 +9,21 @@ import org.springframework.test.context.ContextConfiguration;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
+
 @ContextConfiguration(
         locations = "classpath:spring/spring-app-test.xml",
         inheritLocations = true
@@ -25,7 +33,34 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
+    @Autowired(required = false)
+    protected UserRepository userRepository;
 
+    @Autowired(required = false)
+    private EntityManagerFactory entityManagerFactory;
+
+    @Test
+    public void springCacheInAction() {
+        List<User> before = service.getAll();
+        userRepository.delete(USER_ID);
+        List<User> after = service.getAll();
+        assertThat(before.size()).isGreaterThan(after.size());
+    }
+
+    @Test
+    public void hibernate2lvlCacheInAction() {
+        Assume.assumeNotNull(entityManagerFactory);
+        EntityManager em = entityManagerFactory.createEntityManager();
+        User before = service.get(USER_ID);
+        assertThat(before).isNotNull();
+        Session session = em.unwrap(Session.class);
+        session.doWork(connection -> {
+            try (Statement st = connection.createStatement()) {
+                st.executeUpdate("DELETE FROM users");
+            }
+        });
+        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+    }
 
 //    @Autowired(required = false)
 //    protected JpaUtil jpaUtil;
