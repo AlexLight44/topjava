@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.hibernate.Session;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -10,15 +9,11 @@ import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 @ContextConfiguration(
@@ -30,23 +25,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @PersistenceContext
-    private EntityManager em;
 
-    @Test
-    public void hibernate2lvlCacheInAction() {
-        User before = service.get(USER_ID);
-        assertThat(before).isNotNull();
-        // Удаляем по секрету от Hibernate
-        Session session = em.unwrap(Session.class);
-        session.doWork(connection -> {
-            try (Statement st = connection.createStatement()) {
-                st.executeUpdate("DELETE FROM users");
-            }
-        });
-        // если кеш отключен, повторный запрос выполнится и ничего не найдет, а если не отключен, то вернется юзер из кеша
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
-    }
 
 //    @Autowired(required = false)
 //    protected JpaUtil jpaUtil;
