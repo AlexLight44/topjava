@@ -33,7 +33,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired(required = false)
+    @Autowired
     protected UserRepository userRepository;
 
     @Autowired(required = false)
@@ -61,23 +61,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         });
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
     }
-
-//    @Autowired(required = false)
-//    protected JpaUtil jpaUtil;
-//
-//    @Autowired
-//    private CacheManager cacheManager;
-//
-//
-//    @Before
-//    public void setup() {
-//        if (cacheManager != null) {
-//            cacheManager.getCache("users").clear();
-//        }
-//        if (jpaUtil != null) {
-//            jpaUtil.clear2ndLevelHibernateCache();
-//        }
-//    }
 
     @Test
     public void create() {
