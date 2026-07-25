@@ -1,2 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f1d7d810-b66e-4220-a131-b4bb8558b039" activeEnvironment="Default" name="REST Project 1" resourceRoot="" soapui-version="5.10.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="94c963ca-cf5c-4e24-9246-e5b2cfaff36e" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:8080</con:endpoint></con:endpoints><con:resource name="Topjava" path="/topjava/rest/admin/users/100001" id="a72994c7-c51a-41d5-af07-15fedc222ec4"><con:settings/><con:parameters/><con:method name="Topjava 1" id="187d5235-6312-4317-b471-314bb9a8bb84" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:request name="AdminGetAll" id="7bc66356-9932-4b10-bda6-5b69cb85ad71" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/topjava/rest/admin/users</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="AdminGet" id="32f327e8-41ce-475a-a2c9-5c2d8bc2ce89" mediaType="application/json"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:parameters/></con:request></con:method></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
+<con:soapui-project id="f1d7d810-b66e-4220-a131-b4bb8558b039" activeEnvironment="Default" name="REST Project 1"
+                    resourceRoot="" soapui-version="5.10.0" abortOnError="false" runType="SEQUENTIAL"
+                    xmlns:con="http://eviware.com/soapui/config">
+    <con:settings/>
+    <con:interface xsi:type="con:RestService" id="94c963ca-cf5c-4e24-9246-e5b2cfaff36e"
+                   wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:settings/>
+        <con:definitionCache/>
+        <con:endpoints>
+            <con:endpoint>http://localhost:8080</con:endpoint>
+        </con:endpoints>
+        <con:resource name="Topjava" path="/topjava/rest/admin/users/100001" id="a72994c7-c51a-41d5-af07-15fedc222ec4">
+            <con:settings/>
+            <con:parameters/>
+            <con:method name="Topjava 1" id="187d5235-6312-4317-b471-314bb9a8bb84" method="GET">
+                <con:settings/>
+                <con:parameters/>
+                <con:representation type="RESPONSE">
+                    <con:mediaType>application/json;charset=UTF-8</con:mediaType>
+                    <con:status>200</con:status>
+                    <con:params/>
+                    <con:element>Response</con:element>
+                </con:representation>
+                <con:request name="AdminGetAll" id="7bc66356-9932-4b10-bda6-5b69cb85ad71" mediaType="application/json">
+                    <con:settings>
+                        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/>
+                        </con:setting>
+                    </con:settings>
+                    <con:endpoint>http://localhost:8080</con:endpoint>
+                    <con:request/>
+                    <con:originalUri>http://localhost/topjava/rest/admin/users</con:originalUri>
+                    <con:credentials>
+                        <con:authType>No Authorization</con:authType>
+                    </con:credentials>
+                    <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+                    <con:jmsPropertyConfig/>
+                    <con:parameters/>
+                </con:request>
+                <con:request name="AdminGet" id="32f327e8-41ce-475a-a2c9-5c2d8bc2ce89" mediaType="application/json">
+                    <con:settings/>
+                    <con:endpoint>http://localhost:8080</con:endpoint>
+                    <con:credentials>
+                        <con:authType>No Authorization</con:authType>
+                    </con:credentials>
+                    <con:parameters/>
+                </con:request>
+            </con:method>
+        </con:resource>
+    </con:interface>
+    <con:properties/>
+    <con:wssContainer/>
+    <con:oAuth2ProfileContainer/>
+    <con:oAuth1ProfileContainer/>
+</con:soapui-project>
