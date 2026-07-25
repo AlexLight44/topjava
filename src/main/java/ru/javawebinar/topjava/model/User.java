@@ -118,6 +118,10 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
     }
 
+    public void setMeals(List<Meal> meals) {
+        this.meals = meals;
+    }
+
     public int getCaloriesPerDay() {
         return caloriesPerDay;
     }
