@@ -1,30 +1,42 @@
-# 1. Получить все еды GET
-http://localhost:8080/topjava/rest/meals
+# Примеры запросов к MealRestController (curl)
 
-# 2. Получить одну еду GET
-http://localhost:8080/topjava/rest/meals/100003
+Все запросы выполняются от пользователя:
+- **Email:** `user@yandex.ru`
+- **Password:** `password`
 
-# 3. Фильтрация (getBetween) GET
-http://localhost:8080/topjava/rest/meals/between?startDate=2020-01-30&startTime=10:00:00&endDate=2020-01-31&endTime=13:00:00"
+---
+*  curl.exe для windows
 
-# 4. Создать еду POST
-Basic Auth:
-Username user@yandex.ru
-Password password
-Headers:
-Key Content-Type
-Value application/json
-Body:
-{
-"dateTime": "2020-02-01T18:00:00",
-"description": "Тестовая еда",
-"calories": 300
-}
-http://localhost:8080/topjava/rest/meals
+### 1. Получить всю еду
 
-# 5. Проверить созданную еду GET
+curl -u user@yandex.ru:password http://localhost:8080/topjava/rest/meals
 
-http://localhost:8080/topjava/rest/meals/100012
+### 2. Получить одну еду
 
-# 6. Удалить еду DELETE
-http://localhost:8080/topjava/rest/meals/100003
+curl -u user@yandex.ru:password http://localhost:8080/topjava/rest/meals/100003
+
+### 3. Фильтрация (getBetween)
+
+curl -u user@yandex.ru:password "http://localhost:8080/topjava/rest/meals/between?startDate=2020-01-30&startTime=10:00:00&endDate=2020-01-31&endTime=13:00:00"
+
+### 4. Создать еду
+
+curl -u user@yandex.ru:password -H "Content-Type: application/json" -X POST \
+  -d "{\"dateTime\":\"2020-02-01T18:00:00\",\"description\":\"Тестовая еда\",\"calories\":300}" \
+  http://localhost:8080/topjava/rest/meals
+
+### 5. Проверить созданную еду
+
+После создания смотри заголовок Location в ответе id может отличатся.
+
+curl -u user@yandex.ru:password http://localhost:8080/topjava/rest/meals/100012
+
+### 6. Обновить еду
+
+curl -u user@yandex.ru:password -H "Content-Type: application/json" -X PUT \
+  -d "{\"dateTime\":\"2020-01-30T10:00:00\",\"description\":\"Обновленный завтрак\",\"calories\":200}" \
+  http://localhost:8080/topjava/rest/meals/100003
+
+### 7. Удалить еду
+
+curl -u user@yandex.ru:password -X DELETE http://localhost:8080/topjava/rest/meals/100003
