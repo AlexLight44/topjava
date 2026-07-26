@@ -6,7 +6,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import javax.annotation.Nullable;
 import java.time.LocalTime;
 
-public class SpringToLocalTimeConverter implements Converter<String, LocalTime> {
+public class StringToLocalTimeConverter implements Converter<String, LocalTime> {
 
     @Override
     public LocalTime convert(@Nullable String source) {

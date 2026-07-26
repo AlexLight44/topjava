@@ -89,4 +89,31 @@ class MealRestControllerTest extends AbstractControllerTest {
                         .filter(m -> m.getId() == meal5.getId() || m.getId() == meal1.getId())
                         .toList()));
     }
+
+    @Test
+    void getBetweenWithEmpty() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+                .param("startDate", "")
+                .param("startTime", "")
+                .param("endDate", "")
+                .param("endTime", ""))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealsTo));
+    }
+
+    @Test
+    void getBetweenWithNull() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "between"))
+                .andExpect(status().isOk())
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealsTo));
+    }
+
+    @Test
+    void getBetweenOnlyStartDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+                .param("startDate", "2020-01-31"))
+                .andExpect(status().isOk())
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealsToOnly31));
+    }
 }
