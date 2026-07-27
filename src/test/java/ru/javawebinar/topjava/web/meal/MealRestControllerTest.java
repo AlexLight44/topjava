@@ -85,9 +85,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .param("endTime", "13:00:00"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(mealsTo.stream()
-                        .filter(m -> m.getId() == meal5.getId() || m.getId() == meal1.getId())
-                        .toList()));
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealsToBetween));
     }
 
     @Test

@@ -38,7 +38,7 @@ public class MealTestData {
     public static final MealTo mealTo7 = new MealTo(meal7.getId(), meal7.getDateTime(), meal7.getDescription(), meal7.getCalories(), true);
 
     public static final List<MealTo> mealsTo = List.of(mealTo7, mealTo6, mealTo5, mealTo4, mealTo3, mealTo2, mealTo1);
-
+    public static final List<MealTo> mealsToBetween = List.of(mealTo5, mealTo1);
     public static final List<MealTo> mealsToOnly31 = List.of(mealTo7, mealTo6, mealTo5, mealTo4);
     public static final List<Meal> meals = List.of(meal7, meal6, meal5, meal4, meal3, meal2, meal1);
 
