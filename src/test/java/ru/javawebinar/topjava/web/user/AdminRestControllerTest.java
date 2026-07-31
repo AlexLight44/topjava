@@ -105,6 +105,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         perform(MockMvcRequestBuilders.post(REST_URL + USER_ID)
                 .param("enabled", "true"))
+                .andDo(print())
                 .andExpect(status().isNoContent());
 
         assertTrue(userService.get(USER_ID).isEnabled());
