@@ -22,7 +22,14 @@ $(function () {
                     "data": "roles"
                 },
                 {
-                    "data": "enabled"
+                    "data": "enabled",
+                    "render": function (data, type, row) {
+                        if (type === "display") {
+                            return `<input type="checkbox" ${data ? "checked" : ""} 
+                    onchange="enable(${row.id}, this.checked)"/>`;
+                        }
+                        return data;
+                    }
                 },
                 {
                     "data": "registered"
@@ -41,7 +48,12 @@ $(function () {
                     0,
                     "asc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data) {
+                if (!data.enabled) {
+                    $(row).addClass("disabled");
+                }
+            }
         })
     );
 });

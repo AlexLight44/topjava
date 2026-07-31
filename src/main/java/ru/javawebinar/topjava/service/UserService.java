@@ -56,6 +56,7 @@ public class UserService {
         return checkNotFound(repository.getWithMeals(id), id);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void enable(int id, boolean enabled) {
         User user = repository.get(id);
