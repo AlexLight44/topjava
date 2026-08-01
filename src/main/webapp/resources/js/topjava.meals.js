@@ -59,7 +59,5 @@ function updateTable() {
         type: "GET",
         url: "meals/filter",
         data: $("#filter").serialize()
-    }).done(function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
-    });
+    }).done(updateTableByData);
 }
