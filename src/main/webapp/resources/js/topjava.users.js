@@ -52,15 +52,16 @@ $(function () {
 });
 
 function enable(id, enabled) {
+    const row = $("#" + id);
+    const checkbox = row.find("input[type=checkbox]");
+
     $.ajax({
-        url: userAjaxUrl + id,
-        type: "POST",
-        data: "enabled=" + enabled
+        url: userAjaxUrl + id + "?enabled=" + enabled,
+        type: "PATCH"
     }).done(function () {
-        const row = $("#" + id);
         row.toggleClass("disabled", !enabled);
         successNoty(enabled ? "Enabled" : "Disabled");
     }).fail(function () {
-        row.find("input[type=checkbox]").prop("checked", !enabled);
+        checkbox.prop("checked", !enabled);
     });
 }

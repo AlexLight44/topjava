@@ -4,7 +4,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
@@ -31,12 +30,6 @@ public class MealUIController extends AbstractMealController {
     @ResponseBody
     public void delete(@PathVariable int id) {
         super.delete(id);
-    }
-
-    @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("meals", super.getAll());
-        return "meals";
     }
 
     @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)

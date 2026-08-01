@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -59,7 +60,9 @@ public class UserService {
     @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void enable(int id, boolean enabled) {
-        User user = repository.get(id);
+        User user = repository.get(id);if (user == null) {
+            throw new NotFoundException("User " + id + " not found");
+        }
         user.setEnabled(enabled);
         repository.save(user);
     }
