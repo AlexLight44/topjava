@@ -1,11 +1,9 @@
 const userAjaxUrl = "admin/users/";
 
-// https://stackoverflow.com/a/5064235/548473
 const ctx = {
     ajaxUrl: userAjaxUrl
 };
 
-// $(document).ready(function () {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
@@ -23,6 +21,13 @@ $(function () {
                 },
                 {
                     "data": "enabled",
+                    "render": function (data, type, row) {
+                        if (type === "display") {
+                            return `<input type="checkbox" ${data ? "checked" : ""} 
+                                    onchange="enable(this, this.checked)"/>`;
+                        }
+                        return data;
+                    }
                 },
                 {
                     "data": "registered"
@@ -37,10 +42,7 @@ $(function () {
                 }
             ],
             "order": [
-                [
-                    0,
-                    "asc"
-                ]
+                [0, "asc"]
             ],
             "createdRow": function (row, data) {
                 if (!data.enabled) {
@@ -51,17 +53,16 @@ $(function () {
     );
 });
 
-function enable(id, enabled) {
-    const row = $("#" + id);
-    const checkbox = row.find("input[type=checkbox]");
+function enable(checkbox, enabled) {
+    const row = $(checkbox).closest("tr");
 
     $.ajax({
-        url: userAjaxUrl + id + "?enabled=" + enabled,
+        url: userAjaxUrl + row.attr("id") + "?enabled=" + enabled,
         type: "PATCH"
     }).done(function () {
         row.toggleClass("disabled", !enabled);
         successNoty(enabled ? "Enabled" : "Disabled");
     }).fail(function () {
-        checkbox.prop("checked", !enabled);
+        $(checkbox).prop("checked", !enabled);
     });
 }
