@@ -6,7 +6,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.validation.*;
 import java.util.Set;
 
-public class ValidationUtil {
+public class    ValidationUtil {
 
     private static final Validator validator;
 
