@@ -4,43 +4,35 @@ const ctx = {
     ajaxUrl: mealAjaxUrl
 };
 
+
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
-            "ajax": {
-                "url": userAjaxUrl,
-                "dataSrc": ""
-            },
             "paging": false,
             "info": true,
             "columns": [
-                {"data": "name"},
-                {"data": "email"},
-                {"data": "roles"},
                 {
-                    "data": "enabled",
-                    "render": function (data, type, row) {
-                        if (type === "display") {
-                            return `<input type="checkbox" ${data ? "checked" : ""} 
-                                    onchange="enable(this, this.checked)"/>`;
-                        }
-                        return data;
+                    "data": "dateTime",
+                    "render": function (date) {
+                        return date.replace("T", " ").substring(0, 16);
                     }
                 },
-                {"data": "registered"},
+                {"data": "description"},
+                {"data": "calories"},
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
-                },
-                {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "orderable": false,
+                    "defaultContent": "",
+                    "render": function (data, type, row) {
+                        return '<a class="delete" onclick="deleteRow(' + row.id + ')">' +
+                            '<span class="fa fa-remove"></span></a>';
+                    }
                 }
             ],
-            "order": [[0, "asc"]],
+            "order": [[0, "desc"]],
             "createdRow": function (row, data) {
-                if (!data.enabled) {
-                    $(row).addClass("disabled");
+                $(row).attr("id", data.id);
+                if (data.excess) {
+                    $(row).addClass("excess");
                 }
             }
         })
@@ -49,17 +41,6 @@ $(function () {
 function clearFilter() {
     $("#filter")[0].reset();
     updateTable();
-}
-
-function deleteRow(id) {
-    if (!confirm("Are you sure?")) return;
-    $.ajax({
-        url: mealAjaxUrl + id,
-        type: "DELETE"
-    }).done(function () {
-        successNoty("Deleted");
-        updateTable();
-    });
 }
 
 function updateTable() {

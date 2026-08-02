@@ -39,7 +39,7 @@ $(function () {
             ],
             "order": [[0, "asc"]],
             "createdRow": function (row, data) {
-                $(row).attr("id", data.id);          // важно! чтобы был id у строки
+                $(row).attr("id", data.id);
                 if (!data.enabled) {
                     $(row).addClass("disabled");
                 }
