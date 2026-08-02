@@ -7,18 +7,16 @@ const ctx = {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
+            "ajax": {
+                "url": userAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
-                {
-                    "data": "name"
-                },
-                {
-                    "data": "email"
-                },
-                {
-                    "data": "roles"
-                },
+                {"data": "name"},
+                {"data": "email"},
+                {"data": "roles"},
                 {
                     "data": "enabled",
                     "render": function (data, type, row) {
@@ -29,9 +27,7 @@ $(function () {
                         return data;
                     }
                 },
-                {
-                    "data": "registered"
-                },
+                {"data": "registered"},
                 {
                     "defaultContent": "Edit",
                     "orderable": false
@@ -41,10 +37,9 @@ $(function () {
                     "orderable": false
                 }
             ],
-            "order": [
-                [0, "asc"]
-            ],
+            "order": [[0, "asc"]],
             "createdRow": function (row, data) {
+                $(row).attr("id", data.id);          // важно! чтобы был id у строки
                 if (!data.enabled) {
                     $(row).addClass("disabled");
                 }

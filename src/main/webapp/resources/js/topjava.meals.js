@@ -7,37 +7,45 @@ const ctx = {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
+            "ajax": {
+                "url": userAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
+                {"data": "name"},
+                {"data": "email"},
+                {"data": "roles"},
                 {
-                    "data": "dateTime",
-                    "render": function (date) {
-                        return date.replace("T", " ").substring(0, 16);
+                    "data": "enabled",
+                    "render": function (data, type, row) {
+                        if (type === "display") {
+                            return `<input type="checkbox" ${data ? "checked" : ""} 
+                                    onchange="enable(this, this.checked)"/>`;
+                        }
+                        return data;
                     }
                 },
-                {"data": "description"},
-                {"data": "calories"},
+                {"data": "registered"},
                 {
-                    "orderable": false,
-                    "defaultContent": "",
-                    "render": function (data, type, row) {
-                        return '<a class="delete" onclick="deleteRow(' + row.id + ')">' +
-                            '<span class="fa fa-remove"></span></a>';
-                    }
+                    "defaultContent": "Edit",
+                    "orderable": false
+                },
+                {
+                    "defaultContent": "Delete",
+                    "orderable": false
                 }
             ],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]],
             "createdRow": function (row, data) {
-                $(row).attr("id", data.id);
-                if (data.excess) {
-                    $(row).addClass("excess");
+                if (!data.enabled) {
+                    $(row).addClass("disabled");
                 }
             }
         })
     );
 });
-
 function clearFilter() {
     $("#filter")[0].reset();
     updateTable();
