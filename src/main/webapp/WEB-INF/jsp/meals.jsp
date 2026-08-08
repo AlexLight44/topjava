@@ -109,6 +109,7 @@
         </div>
     </div>
 </div>
+<jsp:include page="fragments/footer.jsp"/>
 <jsp:include page="fragments/i18n.jsp"/>
 <script type="text/javascript">
     i18n["addTitle"] = '<spring:message code="meal.add"/>';
