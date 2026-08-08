@@ -93,12 +93,13 @@ function renderDeleteBtn(data, type, row) {
 
 function failNoty(jqXHR) {
     closeNoty();
+    const errorMsg = jqXHR.responseJSON?.message || jqXHR.responseText || '';
     failedNote = new Noty({
-        text: `<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;${i18n['common.errorStatus']}: ${jqXHR.status}${jqXHR.responseText ? '<br>' + jqXHR.responseText : ''}`,
+        text: `<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;${i18n['common.errorStatus']}: ${jqXHR.status}<br>${errorMsg}`,
         type: "error",
         layout: "bottomRight"
     });
-    failedNote.show()
+    failedNote.show();
 }
 
 function formatDateTime(dateTime) {

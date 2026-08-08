@@ -1,13 +1,12 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.*;
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,13 +67,12 @@ public class ValidationUtil {
         }
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+    public static ResponseEntity<?> getErrorResponse(BindingResult result) {
         String errorFieldsMsg = result.getFieldErrors().stream()
                 .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.joining("<br>"));
-        return ResponseEntity
-                .unprocessableEntity()
-                .contentType(new MediaType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8))
-                .body(errorFieldsMsg);
+
+        return ResponseEntity.unprocessableEntity()
+                .body(Map.of("message", errorFieldsMsg));
     }
 }
