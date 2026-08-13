@@ -1,5 +1,9 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -21,15 +25,29 @@ public class ProfileUIController extends AbstractUserController {
         return "profile";
     }
 
+    @Autowired
+    private MessageSource messageSource;
+
     @PostMapping
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo, SecurityUtil.authUserId());
-            SecurityUtil.get().setTo(userTo);
-            status.setComplete();
-            return "redirect:/meals";
+            try {
+                super.update(userTo, SecurityUtil.authUserId());
+                SecurityUtil.get().setTo(userTo);
+                status.setComplete();
+                return "redirect:/meals";
+            }catch (DataIntegrityViolationException e){
+                String message = messageSource.getMessage(
+                        "exception.user.duplicateEmail",
+                        null,
+                        "User with this email already exists",
+                        LocaleContextHolder.getLocale()
+                );
+                result.rejectValue("email", "duplicate", message);
+                return "profile";
+            }
         }
     }
 
@@ -46,9 +64,22 @@ public class ProfileUIController extends AbstractUserController {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(userTo);
-            status.setComplete();
-            return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
+            try {
+                super.create(userTo);
+                status.setComplete();
+                return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
+            }catch (DataIntegrityViolationException e){
+                String message = messageSource.getMessage(
+                        "exception.user.duplicateEmail",
+                        null,
+                        "User with this email already exists",
+                        LocaleContextHolder.getLocale()
+                );
+
+                result.rejectValue("email", "duplicate", message);
+                model.addAttribute("register", true);
+                return "profile";
+            }
         }
     }
 }

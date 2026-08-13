@@ -2,6 +2,9 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +31,9 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 public class ExceptionInfoHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
+    @Autowired
+    private MessageSource messageSource;
+
     //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
@@ -38,6 +44,16 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        String rootMsg = ValidationUtil.getRootCause(e).getMessage();
+        String message = messageSource.getMessage(
+                "exception.user.duplicateEmail",
+                null,
+                "User with this email already exists",
+                LocaleContextHolder.getLocale()
+        );
+        if (rootMsg != null && rootMsg.toLowerCase().contains("email")) {
+            return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR, e.getMessage());
     }
 
