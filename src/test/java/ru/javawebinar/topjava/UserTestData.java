@@ -41,12 +41,24 @@ public class UserTestData {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
+    public static UserTo getNewTo() {
+        return new UserTo(null, "newName", "newemail@ya.ru", "newPassword", 1500);
+    }
+
     public static User getInvalid() {
         return new User(null, "", "", "", 0, false, null, Collections.singleton(Role.USER));
     }
 
     public static UserTo getInvalidTo() {
        return new UserTo(null, "", "", "", 0);
+    }
+
+    public static User getDuplicate() {
+        return new User(null, "newName", "user@yandex.ru", "newPassword", 1500, Role.USER);
+    }
+
+    public static UserTo getDuplicateTo() {
+        return new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
     }
 
     public static User getUpdated() {
@@ -58,6 +70,10 @@ public class UserTestData {
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
+    }
+
+    public static UserTo getUpdatedTo(){
+        return new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
     }
 
     public static String jsonWithPassword(User user, String passw) {

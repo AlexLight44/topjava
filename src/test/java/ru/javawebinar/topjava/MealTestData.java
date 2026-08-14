@@ -41,4 +41,8 @@ public class MealTestData {
     public static Meal getInvalid() {
         return new Meal(MEAL1_ID, null, "", 0);
     }
+
+    public static Meal getDuplicated() {
+        return new Meal(null, meal1.getDateTime(), "Duplicate", 1100);
+    }
 }

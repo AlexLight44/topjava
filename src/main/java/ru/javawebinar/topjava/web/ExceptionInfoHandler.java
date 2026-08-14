@@ -45,14 +45,26 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
-        String message = messageSource.getMessage(
-                "exception.user.duplicateEmail",
-                null,
-                "User with this email already exists",
-                LocaleContextHolder.getLocale()
-        );
-        if (rootMsg != null && rootMsg.toLowerCase().contains("email")) {
-            return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
+        if (rootMsg != null) {
+            String lower = rootMsg.toLowerCase();
+            if (lower.contains("email") || lower.contains("users_unique_email")) {
+                String message = messageSource.getMessage(
+                        "exception.user.duplicateEmail",
+                        null,
+                        "User with this email already exists",
+                        LocaleContextHolder.getLocale()
+                );
+                return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
+            }
+            if (lower.contains("meal_unique_user_datetime") || lower.contains("date_time")) {
+                String message = messageSource.getMessage(
+                        "exception.meal.duplicateDateTime",
+                        null,
+                        "Meal with this dateTime already exists",
+                        LocaleContextHolder.getLocale()
+                );
+                return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
+            }
         }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR, e.getMessage());
     }
