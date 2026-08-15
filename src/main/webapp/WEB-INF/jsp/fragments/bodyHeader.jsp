@@ -26,5 +26,17 @@
                 </button>
             </form:form>
         </sec:authorize>
+        <div class="dropdown">
+            <a class="btn btn-dark dropdown-toggle" href="#" role="button"
+               id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                ${pageContext.response.locale.language}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownLang">
+                <a class="dropdown-item" href="?lang=ru">ru</a>
+                <a class="dropdown-item" href="?lang=en">en</a>
+            </div>
+        </div>
     </div>
+
+
 </nav>
