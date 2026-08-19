@@ -23,6 +23,7 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
@@ -30,6 +31,11 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
+
+    private static final Map<String, String> CONSTR_I18N_MAP = Map.of(
+            "users_unique_email", "exception.user.duplicateEmail",
+            "meal_unique_user_datetime", "exception.meal.duplicateDateTime"
+    );
 
     @Autowired
     private MessageSource messageSource;
@@ -45,28 +51,27 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
-        if (rootMsg != null) {
-            String lower = rootMsg.toLowerCase();
-            if (lower.contains("email") || lower.contains("users_unique_email")) {
-                String message = messageSource.getMessage(
-                        "exception.user.duplicateEmail",
-                        null,
-                        "User with this email already exists",
-                        LocaleContextHolder.getLocale()
-                );
-                return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
-            }
-            if (lower.contains("meal_unique_user_datetime") || lower.contains("date_time")) {
-                String message = messageSource.getMessage(
-                        "exception.meal.duplicateDateTime",
-                        null,
-                        "Meal with this dateTime already exists",
-                        LocaleContextHolder.getLocale()
-                );
-                return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
-            }
+            if (rootMsg != null) {
+                String lower = rootMsg.toLowerCase();
+                for (Map.Entry<String, String> entry : CONSTR_I18N_MAP.entrySet()) {
+                    if (lower.contains(entry.getKey())) {
+                        String message = messageSource.getMessage(
+                                entry.getValue(),
+                                null,
+                                entry.getValue(),
+                                LocaleContextHolder.getLocale()
+                        );
+                        return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
+                    }
+                }
         }
-        return logAndGetErrorInfo(req, e, true, DATA_ERROR, e.getMessage());
+        String message = messageSource.getMessage(
+                "error.dataIntegrity",
+                null,
+                "Data integrity violation",
+                LocaleContextHolder.getLocale()
+        );
+        return logAndGetErrorInfo(req, e, true, DATA_ERROR, message);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
@@ -91,14 +96,20 @@ public class ExceptionInfoHandler {
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... details) {
+    private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... details) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
         if (logException) {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
-        return new ErrorInfo(req.getRequestURL(), errorType, details);
+        String typeMessage = messageSource.getMessage(
+                errorType.getErrorCode(),
+                null,
+                errorType.getErrorCode(),
+                LocaleContextHolder.getLocale()
+        );
+        return new ErrorInfo(req.getRequestURL(), typeMessage, details);
     }
 
 }
