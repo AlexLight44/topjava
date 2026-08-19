@@ -39,13 +39,7 @@ public class ProfileUIController extends AbstractUserController {
                 status.setComplete();
                 return "redirect:/meals";
             }catch (DataIntegrityViolationException e){
-                String message = messageSource.getMessage(
-                        "exception.user.duplicateEmail",
-                        null,
-                        "User with this email already exists",
-                        LocaleContextHolder.getLocale()
-                );
-                result.rejectValue("email", "duplicate", message);
+                result.rejectValue("email", "exception.user.duplicateEmail");
                 return "profile";
             }
         }
