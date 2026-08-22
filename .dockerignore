@@ -1,0 +1,11 @@
+.git
+.idea
+target
+log
+patch
+doc
+TOPJAVA_ROOT_IS_UNDEFINED
+**/*.iml
+**/*.md
+**/*.pdf
+**/chat_history.jsonl
