@@ -19,12 +19,6 @@
         <sec:authorize access="isAnonymous()">
             <div class="pt-2">
                 <a class="btn btn-lg btn-info mt-2" href="profile/register"><spring:message code="app.register"/> &raquo;</a>
-                <button type="submit" class="btn btn-lg btn-primary mt-2" onclick="login('user@yandex.ru', 'password')">
-                    <spring:message code="app.login"/> User
-                </button>
-                <button type="submit" class="btn btn-lg btn-primary mt-2" onclick="login('admin@gmail.com', 'admin')">
-                    <spring:message code="app.login"/> Admin
-                </button>
             </div>
         </sec:authorize>
         <div class="lead py-4"><spring:message code="app.stackTitle"/> <br>
