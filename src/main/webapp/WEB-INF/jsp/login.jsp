@@ -50,7 +50,6 @@
 </div>
 <div class="container">
     <div class="lead"><spring:message code="app.description"/></div>
-    <a class="btn btn-lg btn-success my-4" href="swagger-ui.html" target="_blank">Swagger REST Api Documentation</a>
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 <script type="text/javascript">
